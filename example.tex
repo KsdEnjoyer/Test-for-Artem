@@ -1,129 +1,921 @@
-\documentclass[a4paper,12pt]{article}
-
+\documentclass[a4paper, 12pt]{article}
 \usepackage[T2A]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[russian]{babel}
-
-\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{tikz}
+\usepackage{amscd}
+\usepackage[inline]{enumitem}
+\usepackage{amsmath}
+\usepackage{dsfont}
+\usepackage{indentfirst}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{epigraph}
+\usepackage{icomma}
+\usepackage{pgfplots}
 \usepackage{graphicx}
-\usepackage{hyperref}
-\usepackage{xcolor}
-\usepackage{listings}
-\usepackage{fancyvrb}
 \usepackage{geometry}
-\usepackage{indentfirst} 
-\usepackage{tocbibind}
+\usepackage[unicode, pdftex, colorlinks]{hyperref}
+\pgfplotsset{compat=1.18, width=12cm}
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\baselinestretch}{1.0}
+\renewcommand\normalsize{\sloppypar}
+\setlength{\topmargin}{-0.5in} 
+\setlength{\textheight}{9.1in}
+\setlength{\oddsidemargin}{-0.3in}
+\setlength{\textwidth}{7in}
+\setlength{\parindent}{0ex}
+\setlength{\parskip}{1ex}
+\usepackage{amsfonts}
+\usepackage{listings} 
 
-\geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+\newtheorem{definition}{Определение}
+\newtheorem{theorem}{Теорема}
+\newtheorem{lemma}{Лемма}
+\newtheorem{corollary}{Следствие}
+\newtheorem{example}{Пример}
+\newtheorem{property}{Свойство}
+\newtheorem{remark}{Замечание}
 
-\title{\textbf{Лекция 2: Система типов в C}}
+\DeclareMathOperator{\Int}{int}
+\DeclareMathOperator{\mes}{mes}
+\DeclareMathOperator{\diam}{diam}
+\DeclareMathOperator{\esssup}{ess\,sup}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\grad}{grad}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\Leb}{\mathcal{L}}
+\renewcommand{\P}{\mathbb{P}}
+\renewcommand{\L}{\mathcal{L}}
+\newcommand{\1}{\mathbf{1}}
+
+\title{}
 \author{}
 \date{}
 
-\lstset{
-    language=C,
-    basicstyle=\ttfamily\small,
-    keywordstyle=\color{blue},
-    commentstyle=\color{gray},
-    stringstyle=\color{red},
-    numbers=left,
-    numberstyle=\tiny,
-    stepnumber=1,
-    breaklines=true,
-    frame=single
-}
-
 \begin{document}
-
-\tableofcontents % Создание оглавления
 
 \maketitle
 
-\section{Общие сведения о языке C}
-\begin{itemize}
-    \item C — регистрозависимый язык программирования.
-    \item Разрядность процессора обычно соответствует размеру указателя (адреса).
-\end{itemize}
+% Билет 1 (уже был)
+\section*{Билет 1: Множества и мощность}
+\begin{definition}[Отображение множеств]
+    Пусть $X, Y$ — множества. \textbf{Отображением} $f$ из $X$ в $Y$ (обозначается $f: X \to Y$) называется правило, которое каждому элементу $x \in X$ ставит в соответствие \textbf{единственный} элемент $y = f(x) \in Y$. Множество $X$ называется \textbf{областью определения}, $Y$ — \textbf{областью значений}.
+\end{definition}
 
-\section{Система типов в C}
-Типы данных в C можно разделить на несколько категорий: целочисленные, дробные и специализированные.
+\begin{definition}[Эквивалентные множества]
+    Два множества $A$ и $B$ называются \textbf{эквивалентными} (или \textbf{равномощными}), если существует \textbf{биекция} (взаимно однозначное соответствие) $f: A \to B$. Обозначение: $A \sim B$.
+\end{definition}
 
-\subsection{Целочисленные типы}
-\begin{itemize}
-    \item \textbf{int} — целочисленный тип (гарантированный диапазон $[-32767, 32767]$, но фактически 32-битный на большинстве платформ).
-    \item \textbf{short} — 16-битное целое число.
-    \item \textbf{long} — 32-битное или 64-битное число в зависимости от компилятора и ОС.
-    \item \textbf{long long} — 64-битное целое число.
-    \item \textbf{char} — 8 бит, диапазон может быть знаковым (-128..127) или беззнаковым (0..255).
-    \item \textbf{\_Bool} — логический тип (занимает 8 бит, но хранит 0 или 1).
-\end{itemize}
+\begin{definition}[Счетное множество]
+    Множество $A$ называется \textbf{счетным}, если оно \textbf{конечно} или \textbf{эквивалентно} множеству натуральных чисел $\N$ ($A \sim \N$).
+\end{definition}
 
-Дополнительно к этим типам можно использовать модификатор \textbf{unsigned} для хранения только положительных значений.
+\begin{property}[Свойства счетных множеств]
+    \hfill
+    \begin{enumerate}[label=(\arabic*)]
+        \item Любое \textbf{подмножество} счетного множества \textbf{не более чем счетно} (т.е. конечно или счетно).
+        \item \textbf{Объединение} конечного или счетного числа \textbf{конечных} или \textbf{счетных} множеств \textbf{не более чем счетно}.
+        \item \textbf{Декартово произведение} двух (а значит и любого конечного числа) \textbf{счетных} множеств \textbf{счетно}.
+        \item Множество всех \textbf{конечных подмножеств} счетного множества \textbf{счетно}.
+        \item Множество всех \textbf{рациональных чисел} $\Q$ \textbf{счетно}.
+        \item Множество всех \textbf{алгебраических чисел} (корней многочленов с целыми коэффициентами) \textbf{счетно}.
+    \end{enumerate}
+\end{property}
 
-\subsection{Дополнительные целочисленные типы}
-Эти типы требуют подключения заголовочных файлов:
-\begin{itemize}
-    \item \textbf{size\_t} и \textbf{ptrdiff\_t} (\texttt{\#include <stddef.h>}) — типы, соответствующие разрядности кода.
-    \item \textbf{uintX\_t} (\texttt{\#include <stdint.h>}) — гарантированная битность: 8, 16, 32, 64 бит.
-    \item \textbf{(unsigned) \_BitInt(X)} (\texttt{\#include <stdalign.h>}) — гарантированная длина X бит.
-\end{itemize}
+\begin{example}[Примеры эквивалентных множеств]
+    \hfill
+    \begin{itemize}
+        \item $\N \sim \Z$ (целые числа). Биекция: $f(n) = (-1)^n \lfloor \frac{n}{2} \rfloor$.
+        \item $\N \sim \Q$ (рациональные числа). Упорядочивание по диагоналям.
+        \item $[0, 1] \sim (0, 1) \sim (0, 1] \sim [0, 1) \sim \R$ (все интервалы эквивалентны всей прямой). Биекции строятся с помощью линейных дробных преобразований или "сдвига" счетного множества точек.
+        \item $[0, 1] \times [0, 1] \sim [0, 1]$ (квадрат эквивалентен отрезку). Используется чередование цифр десятичных дробей.
+    \end{itemize}
+\end{example}
 
-\subsection{Форматный ввод/вывод целых чисел}
-\begin{lstlisting}
-printf("%d", x);    // d - Signed integer (int)
-printf("%u", x);    // u - Unsigned integer (unsigned int)
-printf("%x", x);    // x - Hexadecimal (lowercase letters)
-printf("%X", x);    // X - Hexadecimal (uppercase letters)
-printf("%hd", x);   // hd - Short integer (short)
-printf("%hhd", x);  // hhd - Character (char)
-printf("%ld", x);   // ld - Long integer (long)
-printf("%lld", x);  // lld - Long long integer (long long)
-\end{lstlisting}
+\begin{theorem}[Кантора]
+    Множество всех действительных чисел на отрезке $[0,1]$ \textbf{несчетно}.
+\end{theorem}
 
-\subsection{Дробные типы}
-\begin{itemize}
-    \item \textbf{float} — одинарная точность IEEE-754 ($10^{\pm38}$), 32 бита.
-    \item \textbf{double} — двойная точность, 64 бита.
-    \item \textbf{long double} — 128 бит (или 80 бит на некоторых системах), не рекомендуется.
-\end{itemize}
+\begin{proof}[Доказательство (диагональный метод Кантора)]
+    Предположим противное: пусть $[0,1]$ счетно. Тогда все его элементы можно занумеровать: $x_1, x_2, x_3, \dots$. Запишем каждое число в виде \textbf{бесконечной} десятичной дроби (для чисел вида $0.a_1a_2\dots a_n999\dots$ используем форму с девятками на конце). Получим таблицу:
+    \[
+    \begin{array}{c}
+    x_1 = 0.\ a_{11}\ a_{12}\ a_{13}\ \dots \\
+    x_2 = 0.\ a_{21}\ a_{22}\ a_{23}\ \dots \\
+    x_3 = 0.\ a_{31}\ a_{32}\ a_{33}\ \dots \\
+    \vdots
+    \end{array}
+    \]
+    Построим число $y = 0.b_1b_2b_3\dots$, где цифра $b_k$ выбирается так, чтобы $b_k \neq a_{kk}$ и $b_k \neq 0, 9$ (чтобы избежать двойного представления). Например:
+    \[
+    b_k = \begin{cases}
+        5, & \text{если } a_{kk} \neq 5 \\
+        6, & \text{если } a_{kk} = 5
+    \end{cases}
+    \]
+    Тогда $y \in [0,1]$, но $y \neq x_k$ для \textbf{любого} $k$, так как $k$-я цифра $y$ ($b_k$) отличается от $k$-й цифры $x_k$ ($a_{kk}$). Это противоречит предположению, что все числа из $[0,1]$ были перечислены. Значит, $[0,1]$ несчетно.
+\end{proof}
 
-Форматный ввод/вывод дробных чисел:
-\begin{lstlisting}
-printf("%f", x);   // float
-printf("%lf", y);  // double
-\end{lstlisting}
+% Билет 2 (уже был)
+\section*{Билет 2: Системы множеств}
+\begin{definition}[Полукольцо множеств]
+    Семейство $\mathcal{S} \subset 2^X$ называется \textbf{полукольцом}, если:
+    \begin{enumerate}[label=(\arabic*)]
+        \item $\emptyset \in \mathcal{S}$.
+        \item $\forall A, B \in \mathcal{S} \quad A \cap B \in \mathcal{S}$ (замкнутость относительно конечных пересечений).
+        \item Если $A, B \in \mathcal{S}$ и $A \supset B$, то существует такой \textbf{конечный} набор \textbf{попарно непересекающихся} множеств $C_1, C_2, \dots, C_n \in \mathcal{S}$, что $A \setminus B = \bigcup_{k=1}^n C_k$.
+    \end{enumerate}
+\end{definition}
 
-\subsection{Комплексные числа}
-\begin{lstlisting}
-#include <complex.h>
-_Complex float x = 1.5f - 2.3if;
-\end{lstlisting}
+\begin{definition}[Кольцо множеств]
+    Семейство $\mathcal{R} \subset 2^X$ называется \textbf{кольцом}, если:
+    \begin{enumerate}[label=(\arabic*)]
+        \item $\emptyset \in \mathcal{R}$.
+        \item $A, B \in \mathcal{R} \Rightarrow A \cup B \in \mathcal{R}$ (замкнутость относительно конечных объединений).
+        \item $A, B \in \mathcal{R} \Rightarrow A \setminus B \in \mathcal{R}$ (замкнутость относительно разности).
+    \end{enumerate}
+    \textit{Замечание:} Из (2) и (3) следует замкнутость относительно конечных пересечений: $A \cap B = A \setminus (A \setminus B)$.
+\end{definition}
 
-\section{Дополнительные возможности}
-Создание пользовательских типов через \textbf{typedef}:
-\begin{lstlisting}
-typedef unsigned int uint;
-uint x;
-\end{lstlisting}
+\begin{definition}[Алгебра множеств]
+    Семейство $\mathcal{A} \subset 2^X$ называется \textbf{алгеброй} (или \textbf{булевой алгеброй}), если:
+    \begin{enumerate}[label=(\arabic*)]
+        \item $X \in \mathcal{A}$.
+        \item $A \in \mathcal{A} \Rightarrow A^c = X \setminus A \in \mathcal{A}$ (замкнутость относительно дополнений).
+        \item $A, B \in \mathcal{A} \Rightarrow A \cup B \in \mathcal{A}$ (замкнутость относительно конечных объединений).
+    \end{enumerate}
+    \textit{Замечание:} Алгебра автоматически является кольцом, содержащим $X$. Кольцо является алгеброй $\Leftrightarrow$ содержит $X$.
+\end{definition}
 
-\section{Особенности констант}
-\begin{itemize}
-    \item Отрицательные числа в C — это представление со знаком, но отрицательных констант не существует.
-    \item Ведущий 0 указывает на восьмеричное число.
-    \item Префикс \texttt{0b} используется для двоичных констант.
-\end{itemize}
+\begin{definition}[$\sigma$-кольцо]
+    Кольцо $\mathcal{R}$ называется \textbf{$\sigma$-кольцом}, если оно замкнуто относительно \textbf{счетных объединений}: если $\{A_n\}_{n=1}^{\infty} \subset \mathcal{R}$, то $\bigcup_{n=1}^{\infty} A_n \in \mathcal{R}$.
+\end{definition}
 
-\section{Заголовочные файлы}
+\begin{definition}[$\sigma$-алгебра]
+    Алгебра $\mathcal{A}$ называется \textbf{$\sigma$-алгеброй}, если она замкнута относительно \textbf{счетных объединений}: если $\{A_n\}_{n=1}^{\infty} \subset \mathcal{A}$, то $\bigcup_{n=1}^{\infty} A_n \in \mathcal{A}$.
+    \textit{Замечание:} $\sigma$-алгебра автоматически замкнута относительно счетных пересечений (по законам де Моргана).
+\end{definition}
 
-В языке C существуют различные стандартные заголовочные файлы, которые подключаются для расширения возможностей работы с типами данных, математическими операциями и многими другими аспектами. Вот основные из них, использованные в данном конспекте:
+\begin{definition}[$\delta$-кольцо (кольцо Дедекинда)]
+    Семейство $\mathcal{D} \subset 2^X$ называется \textbf{$\delta$-кольцом}, если:
+    \begin{enumerate}[label=(\arabic*)]
+        \item $\emptyset \in \mathcal{D}$.
+        \item $A, B \in \mathcal{D} \Rightarrow A \setminus B \in \mathcal{D}$.
+        \item Если $\{A_n\}_{n=1}^{\infty} \subset \mathcal{D}$ и $A_1 \supset A_2 \supset \dots$ (убывающая цепочка), то $\bigcap_{n=1}^{\infty} A_n \in \mathcal{D}$ (замкнутость относительно счетных пересечений убывающих цепочек).
+    \end{enumerate}
+\end{definition}
 
-\begin{itemize}
-    \item \textbf{\#include <stddef.h>} — этот заголовочный файл включает определения для стандартных типов данных и макросов, таких как \texttt{size\_t}, \texttt{ptrdiff\_t} и \texttt{NULL}.
-    \item \textbf{\#include <stdint.h>} — определяет типы с фиксированным размером, такие как \texttt{int32\_t}, \texttt{uint64\_t} и другие.
-    \item \textbf{\#include <complex.h>} — включает поддержку комплексных чисел в языке C, позволяя работать с комплексными числами через типы \texttt{\_Complex float}, \texttt{\_Complex double}.
-    \item \textbf{\#include <stdbool.h>} — добавляет поддержку логического типа \texttt{bool} и значений \texttt{true} и \texttt{false}. Этот заголовочный файл используется для работы с булевыми значениями, что значительно упрощает код.
-    \item \textbf{\#include <math.h>} — предоставляет математические функции, такие как \texttt{sin}, \texttt{cos}, \texttt{sqrt} и другие.
-    \item \textbf{\#include <stdio.h>} — предоставляет функции ввода/вывода, такие как \texttt{printf}, \texttt{scanf}, \texttt{fopen} и другие для работы с текстовыми и бинарными файлами.
-\end{itemize}
+\begin{example}[Примеры]
+    \hfill
+    \begin{itemize}
+        \item \textbf{Полукольцо:} Множество всех \textbf{интервалов} на прямой: $(a,b], [a,b), [a,b], (a,b)$; Множество всех \textbf{прямоугольников} вида $[a,b) \times [c,d)$ на плоскости.
+        \item \textbf{Кольцо:} Конечные объединения \textbf{непересекающихся} интервалов на прямой; Множество всех \textbf{конечных подмножеств} натурального ряда $\N$.
+        \item \textbf{Алгебра:} Множество всех \textbf{конечных объединений} интервалов на прямой \textbf{и их дополнений} (но не $\sigma$-алгебра!); Алгебра подмножеств конечного множества.
+        \item \textbf{$\sigma$-кольцо:} Множество всех \textbf{ограниченных} подмножеств прямой $\R$; Множество всех подмножеств $\N$ \textbf{с конечной мерой} (если мера — число элементов).
+        \item \textbf{$\sigma$-алгебра:} \textbf{Борелевская $\sigma$-алгебра} $\B(\R)$ (наименьшая $\sigma$-алгебра, содержащая все открытые множества в $\R$); \textbf{$\sigma$-алгебра Лебега} $\Leb(\R)$ (пополнение борелевской по мере Лебега); $\sigma$-алгебра всех \textbf{измеримых} по Лебегу подмножеств $\R$.
+        \item \textbf{$\delta$-кольцо:} Множество всех \textbf{ограниченных} измеримых по Лебегу подмножеств $\R$; Множество всех подмножеств $\R$ с \textbf{конечной мерой Лебега}.
+    \end{itemize}
+\end{example}
+
+% Билет 3 (добавлена сигма-аддитивность)
+\section*{Билет 3: Мера плоских множеств}
+\begin{definition}[Мера (интуитивно)]
+    \textbf{Мера} — это функция $\mu: \mathcal{M} \to [0, +\infty]$, заданная на некотором классе подмножеств $\mathcal{M}$ пространства $X$, которая обобщает понятия:
+    \begin{itemize}
+        \item \textbf{Длины} интервала на прямой ($\mu([a,b]) = b - a$).
+        \item \textbf{Площади} прямоугольника на плоскости ($\mu([a,b] \times [c,d]) = (b - a)(d - c)$).
+        \item \textbf{Объема} параллелепипеда в пространстве.
+        \item \textbf{Приращения} неубывающей функции $F$: $\mu_F([a,b]) = F(b) - F(a)$.
+        \item \textbf{Количества} точек (счетная мера) или \textbf{вероятности} (вероятностная мера).
+    \end{itemize}
+    Ключевые свойства: \textbf{неотрицательность}, \textbf{аддитивность} (для непересекающихся множеств).
+\end{definition}
+
+\begin{definition}[Элементарные множества на плоскости]
+    На плоскости $\R^2$ \textbf{элементарным множеством} называется любое множество, которое можно представить как \textbf{конечное объединение} \textbf{непересекающихся} прямоугольников вида $P = [a,b) \times [c,d)$. Обозначим класс таких множеств через $\mathcal{E}$.
+\end{definition}
+
+\begin{property}[Свойства элементарных множеств]
+    \hfill
+    \begin{enumerate}[label=(\arabic*)]
+        \item \textbf{Объединение} конечного числа элементарных множеств \textbf{элементарно} (но может потребовать разбиения на непересекающиеся прямоугольники).
+        \item \textbf{Пересечение} конечного числа элементарных множеств \textbf{элементарно}.
+        \item \textbf{Разность} двух элементарных множеств \textbf{элементарна}.
+        \item \textbf{Симметрическая разность} двух элементарных множеств \textbf{элементарна}.
+    \end{enumerate}
+\end{property}
+
+\begin{theorem}[Замкнутость $\mathcal{E}$ относительно операций]
+    Класс элементарных множеств $\mathcal{E}$ на плоскости является \textbf{кольцом} (и даже \textbf{алгеброй}, так как $\R^2$ элементарно).
+\end{theorem}
+
+\begin{proof}
+    \hfill
+    \begin{itemize}
+        \item \textbf{Объединение:} Пусть $A, B \in \mathcal{E}$. $A$ и $B$ — конечные объединения непересекающихся прямоугольников. Их объединение $A \cup B$ — тоже конечное объединение прямоугольников, но они могут пересекаться. Чтобы получить представление в виде непересекающихся, нужно разбить все прямоугольники из $A$ и $B$ с помощью сетки, образованной всеми границами прямоугольников из $A$ и $B$. Получится конечное число непересекающихся прямоугольников, объединение которых равно $A \cup B$. Значит, $A \cup B \in \mathcal{E}$.
+        \item \textbf{Пересечение:} $A \cap B$ — пересечение двух конечных объединений прямоугольников. Пересечение двух прямоугольников — прямоугольник (возможно, пустой). Значит, $A \cap B$ можно записать как конечное объединение прямоугольников (результатов попарных пересечений прямоугольников из $A$ и $B$). Они могут пересекаться только по границам (мере нуль), но для представления в виде непересекающихся достаточно применить процедуру разбиения сеткой, как в пункте (1). Значит, $A \cap B \in \mathcal{E}$.
+        \item \textbf{Разность:} $A \setminus B = A \cap B^c$. Так как $\mathcal{E}$ — алгебра (содержит $\R^2$), то $B^c \in \mathcal{E}$. По предыдущим пунктам $A \cap B^c \in \mathcal{E}$.
+        \item \textbf{Симметрическая разность:} $A \triangle B = (A \setminus B) \cup (B \setminus A)$. По предыдущим пунктам $A \setminus B \in \mathcal{E}$, $B \setminus A \in \mathcal{E}$, и они дизъюнктны. Значит, их объединение элементарно.
+    \end{itemize}
+    Кроме того, $\emptyset$ (пустой прямоугольник) и $\R^2$ (можно покрыть одним прямоугольником) $\in \mathcal{E}$. Значит, $\mathcal{E}$ — алгебра.
+\end{proof}
+
+\begin{definition}[Мера элементарного множества]
+    \textbf{Мерой} (площадью) элементарного множества $A$, представленного как объединение \textbf{непересекающихся} прямоугольников $A = \bigsqcup_{k=1}^n P_k$, называется число $\mu(A) = \sum_{k=1}^n (b_k - a_k)(d_k - c_k)$, где $P_k = [a_k, b_k) \times [c_k, d_k)$.
+\end{definition}
+\textit{Замечание:} Значение $\mu(A)$ не зависит от способа представления $A$ в виде конечного объединения непересекающихся прямоугольников (мера аддитивна и согласована на прямоугольниках).
+
+\begin{definition}[Сигма-аддитивность]
+    Мера $\mu$ называется \textbf{$\sigma$-аддитивной}, если для любой последовательности \textbf{попарно непересекающихся} множеств $\{A_n\}_{n=1}^{\infty}$ из $\mathcal{E}$ с $\bigcup_{n=1}^{\infty} A_n \in \mathcal{E}$ выполняется:
+    \[
+    \mu\left( \bigcup_{n=1}^{\infty} A_n \right) = \sum_{n=1}^{\infty} \mu(A_n).
+    \]
+\end{definition}
+
+\begin{theorem}[Сигма-аддитивность меры для прямоугольников]
+    Мера $\mu$ на классе элементарных множеств $\mathcal{E}$ в $\R^2$ является \textbf{$\sigma$-аддитивной}.
+\end{theorem}
+
+\begin{proof}
+    Пусть $A = \bigsqcup_{k=1}^{\infty} A_k$, где $A, A_k \in \mathcal{E}$. Так как $A$ — ограниченное множество, а $A_k$ дизъюнктны, то $\sum_{k=1}^n \mu(A_k) \leq \mu(A)$ для любого $n$. Переходя к пределу, $\sum_{k=1}^{\infty} \mu(A_k) \leq \mu(A)$. 
+    
+    Обратно: $A$ можно покрыть конечным числом прямоугольников. Для любого $\varepsilon > 0$ каждое $A_k$ можно покрыть открытым множеством $G_k \supset A_k$ так, что $\mu(G_k) < \mu(A_k) + \varepsilon / 2^k$. Тогда $\bigcup_k G_k$ — открытое покрытие компакта $A$. Выделим конечное подпокрытие $G_{k_1}, \dots, G_{k_m}$. Тогда:
+    \[
+    \mu(A) \leq \sum_{j=1}^m \mu(G_{k_j}) \leq \sum_{j=1}^m \left( \mu(A_{k_j}) + \frac{\varepsilon}{2^{k_j}} \right) \leq \sum_{k=1}^{\infty} \mu(A_k) + \varepsilon.
+    \]
+    Так как $\varepsilon > 0$ произвольно, $\mu(A) \leq \sum_{k=1}^{\infty} \mu(A_k)$. Следовательно, $\mu(A) = \sum_{k=1}^{\infty} \mu(A_k)$.
+\end{proof}
+
+\begin{definition}[Внешняя мера Лебега (для плоских множеств)]
+    \textbf{Внешней мерой Лебега} произвольного множества $A \subset \R^2$ называется:
+    \[
+    \mu^*(A) = \inf \left\{ \sum_{k=1}^{\infty} \mu(E_k) \mid \{E_k\}_{k=1}^{\infty} \subset \mathcal{E},\ A \subset \bigcup_{k=1}^{\infty} E_k \right\}.
+    \]
+    Т.е. это \textbf{точная нижняя грань} "площадей" всевозможных \textbf{счетных покрытий} $A$ элементарными множествами.
+\end{definition}
+
+\begin{property}[Свойства внешней меры]
+    \hfill
+    \begin{enumerate}[label=(\arabic*)]
+        \item $\mu^*(\emptyset) = 0$.
+        \item \textbf{Монотонность}: $A \subset B \Rightarrow \mu^*(A) \leq \mu^*(B)$.
+        \item \textbf{Полуаддитивность} (см. теорему ниже).
+    \end{enumerate}
+\end{property}
+
+\begin{theorem}[Полуаддитивность внешней меры]
+    Внешняя мера Лебега \textbf{счетно-полуаддитивна}: для любой последовательности множеств $\{A_n\}_{n=1}^{\infty} \subset \R^2$ выполняется:
+    \[
+    \mu^*\left( \bigcup_{n=1}^{\infty} A_n \right) \leq \sum_{n=1}^{\infty} \mu^*(A_n).
+    \]
+\end{theorem}
+
+\begin{proof}
+    Если $\sum_{n=1}^{\infty} \mu^*(A_n) = +\infty$, неравенство очевидно. Пусть сумма конечна. По определению точной нижней грани, для каждого $A_n$ и для любого $\varepsilon > 0$ существует такое счетное покрытие элементарными множествами $\{E_k^{(n)}\}_{k=1}^{\infty}$, что $A_n \subset \bigcup_{k=1}^{\infty} E_k^{(n)}$ и
+    \[
+    \sum_{k=1}^{\infty} \mu(E_k^{(n)}) < \mu^*(A_n) + \frac{\varepsilon}{2^n}.
+    \]
+    Рассмотрим объединение всех этих покрытий: $\bigcup_{n=1}^{\infty} \bigcup_{k=1}^{\infty} E_k^{(n)}$. Это счетное покрытие множества $\bigcup_{n=1}^{\infty} A_n$ элементарными множествами. Тогда:
+    \[
+    \mu^*\left( \bigcup_{n=1}^{\infty} A_n \right) \leq \sum_{n=1}^{\infty} \sum_{k=1}^{\infty} \mu(E_k^{(n)}) < \sum_{n=1}^{\infty} \left( \mu^*(A_n) + \frac{\varepsilon}{2^n} \right) = \sum_{n=1}^{\infty} \mu^*(A_n) + \varepsilon.
+    \]
+    Так как $\varepsilon > 0$ произвольно, получаем требуемое неравенство: $\mu^*\left( \bigcup_{n=1}^{\infty} A_n \right) \leq \sum_{n=1}^{\infty} \mu^*(A_n)$.
+\end{proof}
+
+\begin{definition}[Измеримое по Лебегу множество (на плоскости)]
+    Множество $A \subset \R^2$ называется \textbf{измеримым по Лебегу}, если для любого $\varepsilon > 0$ существуют такие \textbf{элементарные} множества $E$ и $F$, что:
+    \[
+    E \subset A \subset F \quad \text{и} \quad \mu(F \setminus E) < \varepsilon.
+    \]
+    \textit{Эквивалентное определение (Каратеодори):} $A$ измеримо, если для \textbf{любого} множества $T \subset \R^2$ выполняется:
+    \[
+    \mu^*(T) = \mu^*(T \cap A) + \mu^*(T \cap A^c).
+    \]
+\end{definition}
+
+% Билет 4 (полунепрерывные функции)
+\section*{Билет 4: Полунепрерывные функции}
+\begin{definition}[Полунепрерывность снизу (п.н.сн.)]
+    Функция $f: X \to \R \cup \{+\infty\}$ называется \textbf{полунепрерывной снизу} (п.н.сн.) в точке $x_0 \in X$, если для любого числа $c < f(x_0)$ существует такая окрестность $U(x_0)$, что для всех $x \in U(x_0)$ выполняется $f(x) > c$. \\
+    Функция \textbf{п.н.сн.} на $X$, если она п.н.сн. в каждой точке $x \in X$.
+\end{definition}
+
+\begin{definition}[Полунепрерывность сверху (п.н.св.)]
+    Функция $f: X \to \R \cup \{-\infty\}$ называется \textbf{полунепрерывной сверху} (п.н.св.) в точке $x_0 \in X$, если для любого числа $c > f(x_0)$ существует такая окрестность $U(x_0)$, что для всех $x \in U(x_0)$ выполняется $f(x) < c$. \\
+    Функция \textbf{п.н.св.} на $X$, если она п.н.св. в каждой точке $x \in X$.
+\end{definition}
+
+\begin{example}[Примеры]
+    \hfill
+    \begin{itemize}
+        \item \textbf{П.н.сн.:} Индикатор открытого множества: $f(x) = \1_U(x)$; Функция $f(x) = \frac{1}{x}$ при $x \neq 0$ и $f(0) = +\infty$; Непрерывные функции снизу.
+        \item \textbf{П.н.св.:} Индикатор замкнутого множества: $f(x) = \1_F(x)$; Функция $f(x) = -\frac{1}{x}$ при $x \neq 0$ и $f(0) = -\infty$; Целая часть $[x]$; Непрерывные функции сверху.
+    \end{itemize}
+\end{example}
+
+\begin{theorem}[Характеризация п.н.сн. через надграфик]
+    Функция $f: X \to \R \cup \{+\infty\}$ является \textbf{п.н.сн.} на $X$ тогда и только тогда, когда ее \textbf{надграфик} $\operatorname{epi}(f) = \{(x,y) \in X \times \R \mid y \geq f(x)\}$ является \textbf{замкнутым} подмножеством в $X \times \R$.
+\end{theorem}
+
+\begin{theorem}[Характеризация п.н.св. через подграфик]
+    Функция $f: X \to \R \cup \{-\infty\}$ является \textbf{п.н.св.} на $X$ тогда и только тогда, когда ее \textbf{подграфик} $\operatorname{hyp}(f) = \{(x,y) \in X \times \R \mid y \leq f(x)\}$ является \textbf{замкнутым} подмножеством в $X \times \R$.
+\end{theorem}
+
+\begin{theorem}[Прообраз п.н.сн. функции]
+    Пусть $f: X \to \R \cup \{+\infty\}$ п.н.сн. Тогда для любого $c \in \R$ множество $\{x \in X \mid f(x) \leq c\}$ \textbf{замкнуто}.
+\end{theorem}
+
+\begin{proof}
+    Рассмотрим множество $A_c = \{x \in X \mid f(x) \leq c\}$. Докажем, что его дополнение $A_c^c = \{x \in X \mid f(x) > c\}$ открыто. \\
+    Возьмем $x_0 \in A_c^c$, т.е. $f(x_0) > c$. Так как $f$ п.н.сн. в $x_0$, то для числа $c$ (которое $< f(x_0)$) существует окрестность $U(x_0)$ такая, что для всех $x \in U(x_0)$ выполняется $f(x) > c$. Значит, $U(x_0) \subset A_c^c$. Следовательно, $A_c^c$ открыто, а $A_c$ замкнуто.
+\end{proof}
+
+\begin{remark}
+    Аналогично, если $f$ п.н.св., то множество $\{x \in X \mid f(x) \geq c\}$ замкнуто для любого $c \in \R$.
+\end{remark}
+
+% Билет 5 (элементарный интеграл)
+\section*{Билет 5: Элементарный интеграл}
+\begin{definition}[Элементарный интеграл]
+    Пусть $(X, \mathcal{A}, \mu)$ — пространство с мерой, где $\mathcal{A}$ — алгебра (или кольцо) подмножеств $X$, $\mu$ — конечная аддитивная мера на $\mathcal{A}$. \\
+    \textbf{Элементарной функцией} называется конечная линейная комбинация индикаторов множеств из $\mathcal{A}$: $f = \sum_{i=1}^n c_i \1_{A_i}$, где $A_i \in \mathcal{A}$, $A_i$ попарно не пересекаются, $c_i \in \R$. \\
+    \textbf{Элементарным интегралом} от такой функции называется:
+    \[
+    \int f  d\mu = \sum_{i=1}^n c_i \mu(A_i).
+    \]
+    Значение не зависит от способа представления $f$ в указанном виде.
+\end{definition}
+
+\begin{property}[Свойства элементарного интеграла]
+    Пусть $f, g$ — элементарные функции, $\alpha, \beta \in \R$. Тогда:
+    \begin{enumerate}[label=(\arabic*)]
+        \item \textbf{Линейность}: $\int (\alpha f + \beta g)  d\mu = \alpha \int f  d\mu + \beta \int g  d\mu$.
+        \item \textbf{Монотонность}: Если $f \leq g$ п.в., то $\int f  d\mu \leq \int g  d\mu$.
+        \item $|\int f  d\mu| \leq \int |f|  d\mu$.
+        \item \textbf{Аддитивность по множествам}: Если $A \in \mathcal{A}$ и $f = \sum_{i=1}^n c_i \1_{A_i}$, то $\int_A f  d\mu = \sum_{i=1}^n c_i \mu(A \cap A_i)$.
+    \end{enumerate}
+\end{property}
+
+\begin{theorem}[Леви (о монотонной сходимости) для элементарного интеграла]
+    Пусть $\{f_n\}$ — последовательность \textbf{элементарных} функций на $X$ такая, что:
+    \begin{enumerate}[label=(\roman*)]
+        \item $f_n(x) \leq f_{n+1}(x)$ для всех $n$ и для всех $x \in X$ (монотонное неубывание).
+        \item $\sup_n \int f_n  d\mu < +\infty$ (ограниченность интегралов).
+    \end{enumerate}
+    Тогда существует \textbf{конечная} предельная функция $f(x) = \lim_{n \to \infty} f_n(x)$ почти всюду (п.в.) и
+    \[
+    \int f  d\mu = \lim_{n \to \infty} \int f_n  d\mu.
+    \]
+    \textit{Замечание:} В общем случае $f$ может не быть элементарной, но интеграл от нее определен как предел.
+\end{theorem}
+
+\begin{definition}[Пренебрежимое множество]
+    Множество $A \subset X$ называется \textbf{пренебрежимым} (или \textbf{множеством меры нуль}), если $\mu^*(A) = 0$ (внешняя мера $A$ равна нулю).
+\end{definition}
+
+\begin{definition}[Пренебрежимая функция]
+    Функция $f$ называется \textbf{пренебрежимой}, если $f = 0$ почти всюду (п.в.), т.е. множество $\{x \mid f(x) \neq 0\}$ пренебрежимо.
+\end{definition}
+
+\begin{example}[Примеры]
+    \hfill
+    \begin{itemize}
+        \item \textbf{Пренебрежимое множество:} Любое конечное или счетное множество на прямой с мерой Лебега (если мера точки 0); Канторово множество (несчетное, но мера Лебега 0); График непрерывной функции на прямой.
+        \item \textbf{Пренебрежимая функция:} Функция Дирихле $\1_{\Q}(x)$ на $[0,1]$ (т.к. $\Q$ счетно); Любая функция, отличная от нуля только в конечном числе точек.
+    \end{itemize}
+\end{example}
+
+% Билет 6 (измеримые множества)
+\section*{Билет 6: Измеримые множества}
+\begin{definition}[Измеримое множество]
+    Множество $A \subset X$ называется \textbf{$\mu$-измеримым} (по Лебегу относительно меры $\mu$), если для любого множества $T \subset X$ выполняется равенство \textbf{Каратеодори}:
+    \[
+    \mu^*(T) = \mu^*(T \cap A) + \mu^*(T \cap A^c).
+    \]
+    Обозначим класс всех $\mu$-измеримых множеств через $\mathcal{M}_{\mu}$.
+\end{definition}
+
+\begin{property}[Свойства измеримых множеств]
+    Пусть $\mu^*$ — внешняя мера на $X$. Тогда:
+    \begin{enumerate}[label=(\arabic*)]
+        \item $\mathcal{M}_{\mu}$ — \textbf{$\sigma$-алгебра}.
+        \item $\mu^*$ на $\mathcal{M}_{\mu}$ является \textbf{мерой} (т.е. $\sigma$-аддитивна). Обозначается $\mu$.
+        \item Если $\mu^*(A) = 0$, то $A \in \mathcal{M}_{\mu}$ (все множества меры нуль измеримы).
+        \item \textbf{Пополнение}: Если $\mathcal{A}$ — алгебра, на которой $\mu$ $\sigma$-аддитивна, то $\mathcal{M}_{\mu}$ — это пополнение $\sigma$-алгебры, порожденной $\mathcal{A}$, по мере $\mu$.
+    \end{enumerate}
+\end{property}
+
+\begin{proof}[Доказательства (основные идеи)]
+    \hfill
+    \begin{itemize}
+        \item \textbf{Замкнутость относительно дополнения:} Следует из симметрии определения ($A$ и $A^c$ входят симметрично).
+        \item \textbf{Замкнутость относительно конечных объединений:} Пусть $A, B \in \mathcal{M}_{\mu}$. Нужно показать $A \cup B \in \mathcal{M}_{\mu}$. Для любого $T$:
+        \begin{align*}
+        \mu^*(T) &= \mu^*(T \cap A) + \mu^*(T \cap A^c) \quad \text{(из-измеримости } A) \\
+        &= \mu^*(T \cap A) + \mu^*((T \cap A^c) \cap B) + \mu^*((T \cap A^c) \cap B^c) \quad \text{(из-измеримости } B) \\
+        &\geq \mu^*(T \cap (A \cup B)) + \mu^*(T \cap (A \cup B)^c) \quad \text{(по полуаддитивности и } (A \cup B)^c = A^c \cap B^c) \\
+        \end{align*}
+        Обратное неравенство $\leq$ всегда верно по полуаддитивности. Значит, равенство.
+        \item \textbf{Замкнутость относительно счетных объединений:} Пусть $\{A_n\} \subset \mathcal{M}_{\mu}$, $A = \bigcup_{n=1}^{\infty} A_n$. Положим $B_1 = A_1$, $B_n = A_n \setminus \bigcup_{k=1}^{n-1} A_k$. Тогда $B_n \in \mathcal{M}_{\mu}$ (по доказанному), $B_n$ дизъюнктны, $A = \bigsqcup_{n=1}^{\infty} B_n$. Для $T$:
+        \begin{align*}
+        \mu^*(T) &= \mu^*(T \cap B_1) + \mu^*(T \cap B_1^c) \quad \text{(измеримость } B_1) \\
+        &= \mu^*(T \cap B_1) + \mu^*(T \cap B_1^c \cap B_2) + \mu^*(T \cap B_1^c \cap B_2^c) \quad \text{(измеримость } B_2) \\
+        &= \mu^*(T \cap B_1) + \mu^*(T \cap B_2) + \mu^*(T \cap (B_1 \cup B_2)^c) \\
+        &\quad \vdots \\
+        &= \sum_{k=1}^n \mu^*(T \cap B_k) + \mu^*(T \cap (\bigcup_{k=1}^n B_k)^c) \\
+        &\geq \sum_{k=1}^n \mu^*(T \cap B_k) + \mu^*(T \cap A^c) \quad (A^c \subset (\bigcup_{k=1}^n B_k)^c)
+        \end{align*}
+        Устремляя $n \to \infty$ и учитывая $\sum_{k=1}^{\infty} \mu^*(T \cap B_k) \geq \mu^*(T \cap A)$ (полуаддитивность), получаем $\mu^*(T) \geq \mu^*(T \cap A) + \mu^*(T \cap A^c)$. Обратное $\leq$ верно всегда. Значит, $A$ измеримо.
+        \item \textbf{$\sigma$-аддитивность $\mu$ на $\mathcal{M}_{\mu}$:} Пусть $\{A_n\} \subset \mathcal{M}_{\mu}$ дизъюнктны, $A = \bigsqcup_{n=1}^{\infty} A_n$. Тогда для любого $n$:
+        \[
+        \mu(\bigsqcup_{k=1}^n A_k) = \sum_{k=1}^n \mu(A_k) \quad \text{(конечная аддитивность)}.
+        \]
+        Так как $A \supset \bigsqcup_{k=1}^n A_k$, то $\mu(A) \geq \sum_{k=1}^n \mu(A_k)$. Устремляя $n \to \infty$, $\mu(A) \geq \sum_{k=1}^{\infty} \mu(A_k)$. Обратное неравенство $\mu(A) \leq \sum_{k=1}^{\infty} \mu(A_k)$ следует из полуаддитивности внешней меры. Значит, $\mu(A) = \sum_{k=1}^{\infty} \mu(A_k)$.
+    \end{itemize}
+\end{proof}
+
+\begin{definition}[Класс множеств, измеримых по Лебегу ($\R^n$)]
+    \textbf{Множеством, измеримым по Лебегу} в $\R^n$, называется любое множество $A \subset \R^n$, измеримое относительно \textbf{меры Лебега} $m$, построенной по внешней мере Лебега. Класс всех таких множеств обозначается $\Leb(\R^n)$.
+    \begin{itemize}
+        \item $\Leb(\R^n)$ — \textbf{$\sigma$-алгебра}.
+        \item Все \textbf{борелевские множества} (элементы $\B(\R^n)$ — $\sigma$-алгебры, порожденной открытыми множествами) \textbf{измеримы} по Лебегу.
+        \item $\Leb(\R^n)$ — это \textbf{пополнение} $\B(\R^n)$ по мере Лебега: $A \in \Leb(\R^n)$ тогда и только тогда, когда существуют борелевские множества $B_1, B_2$ такие, что $B_1 \subset A \subset B_2$ и $m(B_2 \setminus B_1) = 0$.
+        \item Существуют \textbf{неборелевские} множества, измеримые по Лебегу (например, любое неборелевское подмножество канторова множества меры нуль).
+        \item Существуют \textbf{неизмеримые} по Лебегу множества (например, \textbf{множество Витали}).
+    \end{itemize}
+\end{definition}
+
+% Билет 7 (измеримые функции)
+\section*{Билет 7: Измеримые функции}
+\begin{definition}[Измеримая функция]
+    Пусть $(X, \mathcal{M}, \mu)$ — пространство с мерой. Функция $f: X \to \R \cup \{-\infty, +\infty\}$ называется \textbf{$\mu$-измеримой}, если для любого $c \in \R$ множество $\{x \in X \mid f(x) < c\}$ принадлежит $\mathcal{M}$ (т.е. измеримо).
+    \textit{Эквивалентные условия:} $\{x \mid f(x) \leq c\} \in \mathcal{M}$, $\{x \mid f(x) > c\} \in \mathcal{M}$, $\{x \mid f(x) \geq c\} \in \mathcal{M}$ для всех $c \in \R$.
+\end{definition}
+
+\begin{definition}[Борелевское множество]
+    Подмножество $\R^n$ называется \textbf{борелевским}, если оно принадлежит \textbf{борелевской $\sigma$-алгебре} $\B(\R^n)$ — наименьшей $\sigma$-алгебре, содержащей все открытые (или все замкнутые) подмножества $\R^n$.
+\end{definition}
+
+\begin{property}[Свойства измеримых функций]
+    Пусть $f, g: X \to \R$ — $\mu$-измеримы, $\alpha \in \R$. Тогда следующие функции также $\mu$-измеримы:
+    \begin{enumerate}[label=(\arabic*)]
+        \item $\alpha f$
+        \item $f + g$ (если нет неопределенностей вида $(+\infty) + (-\infty)$)
+        \item $f \cdot g$
+        \item $|f|$, $\max(f, g)$, $\min(f, g)$
+        \item $f^+ = \max(f, 0)$, $f^- = -\min(f, 0)$
+        \item Если $g(x) \neq 0$ п.в., то $f/g$
+    \end{enumerate}
+\end{property}
+
+\begin{proof}[Доказательство для $f + g$ (без пределов)]
+    Нужно показать: $\{x \mid f(x) + g(x) < c\} \in \mathcal{M}$ для любого $c \in \R$. \\
+    Заметим, что $f(x) + g(x) < c$ тогда и только тогда, когда существует \textbf{рациональное} число $r$ такое, что $f(x) < r$ и $g(x) < c - r$. Формально:
+    \[
+    \{x \mid f(x) + g(x) < c\} = \bigcup_{r \in \Q} \Big( \{x \mid f(x) < r\} \cap \{x \mid g(x) < c - r\} \Big).
+    \]
+    Так как $\Q$ счетно, это \textbf{счетное объединение}. Множества $\{x \mid f(x) < r\}$ и $\{x \mid g(x) < c - r\}$ измеримы по определению. Пересечение измеримых множеств измеримо. Счетное объединение измеримых множеств измеримо. Значит, $\{x \mid f(x) + g(x) < c\} \in \mathcal{M}$.
+\end{proof}
+
+\begin{proof}[Доказательство для $f \cdot g$ (без пределов)]
+    \hfill
+    \begin{itemize}
+        \item \textbf{Случай $f = g$:} $\{x \mid f^2(x) < c\} = \begin{cases} 
+        \{x \mid |f(x)| < \sqrt{c}\}, & c > 0 \\
+        \emptyset, & c \leq 0 
+        \end{cases}$ — измеримо.
+        \item \textbf{Общий случай:} Используем тождество: $f \cdot g = \frac{1}{4} \left[ (f + g)^2 - (f - g)^2 \right]$. Так как $f + g$ и $f - g$ измеримы (по предыдущему), их квадраты измеримы (по пункту 1), разность измеримых измерима, умножение на константу сохраняет измеримость.
+    \end{itemize}
+\end{proof}
+
+% Билет 8 (критерий измеримости)
+\section*{Билет 8: Критерий измеримости функции}
+\begin{theorem}[Критерий измеримости функции]
+    Пусть $(X, \mathcal{M}, \mu)$ — пространство с мерой. Для функции $f: X \to \R \cup \{-\infty, +\infty\}$ эквивалентны:
+    \begin{enumerate}[label=(\arabic*)]
+        \item $f$ $\mu$-измерима.
+        \item Для любого открытого множества $U \subset \R$ прообраз $f^{-1}(U) \in \mathcal{M}$.
+        \item Для любого замкнутого множества $F \subset \R$ прообраз $f^{-1}(F) \in \mathcal{M}$.
+        \item Для любого борелевского множества $B \in \B(\R)$ прообраз $f^{-1}(B) \in \mathcal{M}$.
+        \item Существуют последовательности $\{u_n\}$ п.н.сн. функций и $\{v_n\}$ п.н.св. функций такие, что $u_n(x) \geq f(x) \geq v_n(x)$ для всех $x$ и $u_n(x) \downarrow f(x)$, $v_n(x) \uparrow f(x)$ для всех $x$ (поточечно).
+    \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+    \hfill
+    \begin{itemize}
+        \item \textbf{(1) $\Rightarrow$ (2):} Любое открытое $U \subset \R$ представимо как счетное объединение открытых интервалов: $U = \bigcup_{k=1}^{\infty} (a_k, b_k)$. Тогда $f^{-1}(U) = \bigcup_{k=1}^{\infty} f^{-1}((a_k, b_k))$. Но $f^{-1}((a_k, b_k)) = \{x \mid a_k < f(x) < b_k\} = \{x \mid f(x) > a_k\} \cap \{x \mid f(x) < b_k\} \in \mathcal{M}$. Счетное объединение измеримых множеств измеримо.
+        \item \textbf{(2) $\Leftrightarrow$ (3) $\Leftrightarrow$ (4):} Следует из того, что $\sigma$-алгебра борелевских множеств порождается открытыми (или замкнутыми) множествами, и прообраз сохраняет операции.
+        \item \textbf{(1) $\Rightarrow$ (5):} Построим аппроксимации. Для каждого $n$ и каждого целого $k$ определим множества:
+        \[
+        E_{n,k} = \{x \mid \frac{k-1}{2^n} \leq f(x) < \frac{k}{2^n} \}.
+        \]
+        Эти множества измеримы (разность $\{x \mid f(x) < \frac{k}{2^n}\} \setminus \{x \mid f(x) < \frac{k-1}{2^n}\}$). Определим ступенчатые функции:
+        \[
+        u_n(x) = \sum_{k=-\infty}^{\infty} \frac{k}{2^n} \1_{E_{n,k}}(x), \quad v_n(x) = \sum_{k=-\infty}^{\infty} \frac{k-1}{2^n} \1_{E_{n,k}}(x).
+        \]
+        Тогда $v_n(x) \leq f(x) \leq u_n(x)$ для всех $x$. При $n \to \infty$, шаг $\frac{1}{2^n} \to 0$, поэтому $u_n(x) \downarrow f(x)$, $v_n(x) \uparrow f(x)$ для всех $x$. Функции $u_n$ п.н.св. (как ступенчатые, постоянные на множествах), $v_n$ п.н.сн.
+        \item \textbf{(5) $\Rightarrow$ (1):} Докажем измеримость $f$. Зафиксируем $c \in \R$. Покажем, что $\{x \mid f(x) < c\} \in \mathcal{M}$. \\
+        Заметим: $f(x) < c$ тогда и только тогда, когда \textbf{существует} $n$ такое, что $v_n(x) < c$ (так как $v_n(x) \uparrow f(x)$). Формально:
+        \[
+        \{x \mid f(x) < c\} = \bigcup_{n=1}^{\infty} \{x \mid v_n(x) < c\}.
+        \]
+        Так как $v_n$ п.н.сн., множество $\{x \mid v_n(x) \geq c\}$ замкнуто, но нам нужно $\{x \mid v_n(x) < c\} = \{x \mid v_n(x) \geq c\}^c$. Это \textbf{открытое} множество (дополнение замкнутого). В общем случае, если $X$ — топологическое пространство, а $\mathcal{M}$ содержит борелевские множества, то открытые множества измеримы, значит $\{x \mid v_n(x) < c\} \in \mathcal{M}$. Счетное объединение измеримых множеств измеримо. Значит, $\{x \mid f(x) < c\} \in \mathcal{M}$.
+    \end{itemize}
+\end{proof}
+
+% Билет 9 (полная мера)
+\section*{Билет 9: Полная мера}
+\begin{definition}[Полная мера]
+    Пространство с мерой $(X, \mathcal{M}, \mu)$ называется \textbf{полным}, если из того, что $A \in \mathcal{M}$, $\mu(A) = 0$ и $B \subset A$, следует, что $B \in \mathcal{M}$ (и, конечно, $\mu(B) = 0$). Сама мера $\mu$ также называется \textbf{полной}.
+\end{definition}
+
+\begin{theorem}[Об измеримости эквивалентных функций]
+    Пусть $(X, \mathcal{M}, \mu)$ — \textbf{полное} пространство с мерой. Пусть $f$ и $g$ — функции на $X$ такие, что $f(x) = g(x)$ \textbf{почти всюду} (п.в.) относительно $\mu$. Тогда если $f$ $\mu$-измерима, то и $g$ $\mu$-измерима.
+\end{theorem}
+
+\begin{proof}
+    Пусть $A = \{x \in X \mid f(x) \neq g(x)\}$. По условию $\mu(A) = 0$. Так как мера полная, любое подмножество $A$ измеримо и имеет меру нуль. \\
+    Зафиксируем $c \in \R$. Рассмотрим множество $\{x \mid g(x) < c\}$. Его можно представить в виде:
+    \[
+    \{x \mid g(x) < c\} = \big[ \{x \mid g(x) < c\} \cap A^c \big] \cup \big[ \{x \mid g(x) < c\} \cap A \big].
+    \]
+    \begin{itemize}
+        \item На $A^c$: $g(x) = f(x)$, поэтому $\{x \mid g(x) < c\} \cap A^c = \{x \mid f(x) < c\} \cap A^c$. Так как $f$ измерима, $\{x \mid f(x) < c\} \in \mathcal{M}$, значит и его пересечение с $A^c \in \mathcal{M}$ (так как $A^c \in \mathcal{M}$).
+        \item $\{x \mid g(x) < c\} \cap A \subset A$. Так как мера полная и $\mu(A) = 0$, любое подмножество $A$ измеримо. Значит, $\{x \mid g(x) < c\} \cap A \in \mathcal{M}$.
+    \end{itemize}
+    Объединение двух измеримых множеств измеримо. Следовательно, $\{x \mid g(x) < c\} \in \mathcal{M}$ для любого $c$, что означает измеримость $g$.
+\end{proof}
+
+% Билет 10 (сходимости)
+\section*{Билет 10: Виды сходимости}
+\begin{definition}[Сходимость почти всюду (п.в.)]
+    Последовательность функций $\{f_n\}$ \textbf{сходится почти всюду} к функции $f$ на $X$ относительно меря $\mu$, если существует множество $E \subset X$ с $\mu(E) = 0$ такое, что для всех $x \in X \setminus E$ выполняется $f_n(x) \to f(x)$ при $n \to \infty$. Обозначение: $f_n \xrightarrow{\text{п.в.}} f$.
+\end{definition}
+
+\begin{definition}[Сходимость по мере]
+    Последовательность функций $\{f_n\}$ \textbf{сходится по мере} к функции $f$ на $X$ относительно меры $\mu$, если для любого $\varepsilon > 0$:
+    \[
+    \lim_{n \to \infty} \mu(\{x \in X \mid |f_n(x) - f(x)| \geq \varepsilon\}) = 0.
+    \]
+    Обозначение: $f_n \xrightarrow{\mu} f$.
+\end{definition}
+
+\begin{example}[Примеры]
+    \hfill
+    \begin{itemize}
+        \item \textbf{Сх. п.в., но не по мере:} Редко. Обычно на пространствах бесконечной меры. Пример: $X = \R$, $\mu$ — мера Лебега. $f_n(x) = \1_{[n, n+1]}(x)$. Тогда $f_n(x) \to 0$ для \textbf{каждого} $x$ (так как для фикс. $x$ при $n > x$ $f_n(x) = 0$), т.е. $f_n \xrightarrow{\text{п.в.}} 0$. Но $\mu(\{x \mid |f_n(x) - 0| \geq 1\}) = \mu([n, n+1]) = 1 \not\to 0$, значит, не сходится по мере.
+        \item \textbf{Сх. по мере, но не п.в.:} Классический пример на $[0,1]$ с мерой Лебега. Построим "бегущий отрезок":
+        \[
+        f_1 = \1_{[0,1]}, \quad f_2 = \1_{[0,1/2]}, \quad f_3 = \1_{[1/2,1]}, \quad f_4 = \1_{[0,1/4]}, \quad f_5 = \1_{[1/4,1/2]}, \quad f_6 = \1_{[1/2,3/4]}, \quad f_7 = \1_{[3/4,1]}, \quad \dots
+        \]
+        Длина носителя $f_n$ стремится к 0. Для любого $\varepsilon > 0$ ($\varepsilon < 1$), $\mu(\{x \mid |f_n(x) - 0| \geq \varepsilon\}) = \mu(\operatorname{supp} f_n) \to 0$, значит $f_n \xrightarrow{\mu} 0$. Но для любого $x \in [0,1]$, последовательность $f_n(x)$ содержит бесконечно много единиц (так как отрезки покрывают $[0,1]$ бесконечно много раз), значит $f_n(x)$ \textbf{не сходится} ни в одной точке! (Хотя есть подпоследовательность, сходящаяся п.в.).
+    \end{itemize}
+\end{example}
+
+\begin{theorem}[Из сходимости п.в. следует сходимость по мере (при $\mu(X) < \infty$)]
+    Пусть $(X, \mathcal{M}, \mu)$ — пространство с мерой, \textbf{$\mu(X) < \infty$}. Пусть $\{f_n\}$ — последовательность измеримых функций, $f_n \xrightarrow{\text{п.в.}} f$ на $X$. Тогда $f_n \xrightarrow{\mu} f$.
+\end{theorem}
+
+\begin{proof}
+    Фиксируем $\varepsilon > 0$, $\delta > 0$. Нужно найти $N$ такое, что для всех $n \geq N$: $\mu(\{x \mid |f_n(x) - f(x)| \geq \varepsilon\}) < \delta$. \\
+    По сходимости п.в.: множество $E = \{x \in X \mid f_n(x) \not\to f(x)\}$ имеет $\mu(E) = 0$. \\
+    Определим множества:
+    \[
+    A_m = \{x \in X \mid |f_m(x) - f(x)| \geq \varepsilon\}, \quad B_n = \bigcup_{m=n}^{\infty} A_m.
+    \]
+    Заметим, что $\{B_n\}$ убывает: $B_1 \supset B_2 \supset \dots$. \\
+    Если $x \in X \setminus E$, то $f_n(x) \to f(x)$, значит для этого $x$ существует $N_x$ такое, что для всех $m \geq N_x$: $|f_m(x) - f(x)| < \varepsilon$. Следовательно, $x \notin A_m$ для всех $m \geq N_x$, а значит $x \notin B_{N_x}$. Это верно для всех $x \in X \setminus E$. Поэтому:
+    \[
+    \bigcap_{n=1}^{\infty} B_n \subset E.
+    \]
+    Так как $\mu(E) = 0$ и $\mu(X) < \infty$, можно применить свойство непрерывности меры сверху: $\mu(B_n) \downarrow \mu(\bigcap_{n=1}^{\infty} B_n) \leq \mu(E) = 0$. Значит, $\lim_{n \to \infty} \mu(B_n) = 0$. \\
+    Выберем $N$ такое, что $\mu(B_N) < \delta$. Тогда для всех $n \geq N$:
+    \[
+    \{x \mid |f_n(x) - f(x)| \geq \varepsilon\} = A_n \subset B_N \quad \text{(так как $n \geq N$)}.
+    \]
+    Следовательно, $\mu(A_n) \leq \mu(B_N) < \delta$ для всех $n \geq N$, что и означает $f_n \xrightarrow{\mu} f$.
+\end{proof}
+
+\begin{remark}
+    Условие $\mu(X) < \infty$ существенно (см. пример выше).
+\end{remark}
+
+% Билет 11 (Егоров, Лузин)
+\section*{Билет 11: Теоремы Егорова и Лузина}
+\begin{definition}[Почти равномерная сходимость]
+    Последовательность функций $\{f_n\}$ \textbf{сходится почти равномерно} к функции $f$ на $X$ относительно меры $\mu$, если для любого $\delta > 0$ существует такое множество $E_\delta \subset X$ с $\mu(E_\delta) < \delta$, что $f_n \to f$ \textbf{равномерно} на $X \setminus E_\delta$. Обозначение: $f_n \xrightarrow{\text{п.р.}} f$.
+\end{definition}
+
+\begin{theorem}[Егорова]
+    Пусть $(X, \mathcal{M}, \mu)$ — пространство с мерой, \textbf{$\mu(X) < \infty$}. Пусть $\{f_n\}$ — последовательность \textbf{измеримых} функций, сходящаяся \textbf{п.в.} к измеримой функции $f$ на $X$. Тогда $f_n \xrightarrow{\text{п.р.}} f$.
+\end{theorem}
+
+\begin{proof}
+    Зафиксируем $\delta > 0$. Нужно найти $E_\delta$ с $\mu(E_\delta) < \delta$ такое, что $f_n \rightrightarrows f$ на $X \setminus E_\delta$. \\
+    По предыдущей теореме $f_n \xrightarrow{\mu} f$ (так как $\mu(X) < \infty$). Для каждого $k \in \N$ определим:
+    \[
+    A_n^{(k)} = \{x \in X \mid |f_n(x) - f(x)| \geq \frac{1}{k}\}.
+    \]
+    Так как $f_n \xrightarrow{\mu} f$, то для каждого $k$: $\lim_{n \to \infty} \mu(A_n^{(k)}) = 0$. Значит, для каждого $k$ найдется $n_k$ такое, что $\mu(A_{n_k}^{(k)}) < \frac{\delta}{2^k}$. \\
+    Положим $E_\delta = \bigcup_{k=1}^{\infty} A_{n_k}^{(k)}$. Тогда:
+    \[
+    \mu(E_\delta) \leq \sum_{k=1}^{\infty} \mu(A_{n_k}^{(k)}) < \sum_{k=1}^{\infty} \frac{\delta}{2^k} = \delta.
+    \]
+    Теперь докажем, что $f_n \to f$ \textbf{равномерно} на $X \setminus E_\delta$. \\
+    Фиксируем $\varepsilon > 0$. Выберем $K$ такое, что $\frac{1}{K} < \varepsilon$. Рассмотрим $n \geq n_K$. Для $x \in X \setminus E_\delta$ имеем $x \notin A_{n_k}^{(k)}$ для всех $k$, в частности, $x \notin A_{n_K}^{(K)}$. Но $A_{n_K}^{(K)} = \{x \mid |f_{n_K}(x) - f(x)| \geq \frac{1}{K}\}$. Значит, для всех $x \in X \setminus E_\delta$:
+    \[
+    |f_{n_K}(x) - f(x)| < \frac{1}{K} < \varepsilon.
+    \]
+    Однако, это верно только для $n = n_K$. Нам нужно для всех $n \geq n_K$. \\
+    Так как $x \notin E_\delta$, то $x \notin A_n^{(k)}$ для \textbf{всех} $n \geq n_k$? Нет! Мы выбрали только конкретные $n_k$ для каждого $k$, а не для всех $n$. \\
+    \textbf{Исправим:} Определим множества:
+    \[
+    B_m^{(k)} = \bigcup_{n=m}^{\infty} \{x \mid |f_n(x) - f(x)| \geq \frac{1}{k}\} = \bigcup_{n=m}^{\infty} A_n^{(k)}.
+    \]
+    Так как $f_n \to f$ п.в., то $\mu(\bigcap_{m=1}^{\infty} B_m^{(k)}) = 0$ (множество точек, где сходимость не "портируются" начиная с некоторого места). Так как $\mu(X) < \infty$, $\mu(B_m^{(k)}) \downarrow \mu(\bigcap_{m=1}^{\infty} B_m^{(k)}) = 0$. Значит, для каждого $k$ найдется $m_k$ такое, что $\mu(B_{m_k}^{(k)}) < \frac{\delta}{2^k}$. \\
+    Положим $E_\delta = \bigcup_{k=1}^{\infty} B_{m_k}^{(k)}$. Тогда $\mu(E_\delta) < \delta$. \\
+    Теперь покажем равномерную сходимость на $X \setminus E_\delta$. Фиксируем $\varepsilon > 0$. Выберем $K$ с $\frac{1}{K} < \varepsilon$. Пусть $N = m_K$. Для $n \geq N$ и для любого $x \in X \setminus E_\delta$ имеем $x \notin B_{m_K}^{(K)}$. Но $B_{m_K}^{(K)} = \bigcup_{n=m_K}^{\infty} A_n^{(K)}$. Значит, $x \notin A_n^{(K)}$ для всех $n \geq m_K$, т.е. $|f_n(x) - f(x)| < \frac{1}{K} < \varepsilon$ для всех $n \geq N$ и всех $x \in X \setminus E_\delta$. Это и означает равномерную сходимость.
+\end{proof}
+
+\begin{definition}[C-свойство]
+    Функция $f: \R \to \R$ обладает \textbf{C-свойством} (свойством Лузина) на $[a,b]$, если она \textbf{непрерывна} на $[a,b]$ за исключением, возможно, множества меры нуль.
+\end{definition}
+\textit{Замечание:} Это означает, что сужение $f$ на некоторое замкнутое подмножество $F \subset [a,b]$ с $m([a,b] \setminus F) < \varepsilon$ непрерывно (но $f$ сама может иметь разрывы вне $F$).
+
+\begin{theorem}[Лузина]
+    Пусть $f: [a,b] \to \R$ — \textbf{измеримая} по Лебегу (конечная п.в.) функция. Тогда для любого $\varepsilon > 0$ существует такое \textbf{замкнутое} множество $F \subset [a,b]$, что:
+    \begin{enumerate}[label=(\roman*)]
+        \item $m([a,b] \setminus F) < \varepsilon$ (мера дополнения мала).
+        \item Сужение $f|_F$ \textbf{непрерывно} на $F$.
+    \end{enumerate}
+    Иными словами, любая измеримая функция обладает \textbf{C-свойством}.
+\end{theorem}
+\textit{Формулировка без доказательства.}
+
+% Билет 12 (интеграл по мере)
+\section*{Билет 12: Интеграл по мере}
+\begin{definition}[Интегрируемая по мере функция]
+    Пусть $(X, \mathcal{M}, \mu)$ — пространство с мерой. Функция $f: X \to \R \cup \{\pm\infty\}$ называется \textbf{интегрируемой по мере} $\mu$, если:
+    \begin{enumerate}
+        \item $f$ $\mu$-измерима
+        \item $\int_X |f|  d\mu < +\infty$
+    \end{enumerate}
+    Множество таких функций обозначается $\mathcal{L}^1(X, \mu)$.
+\end{definition}
+
+\begin{definition}[Интеграл по мере]
+    \textbf{Интегралом} от $f$ по мере $\mu$ называется:
+    \[
+    \int_X f  d\mu = \int_X f^+  d\mu - \int_X f^-  d\mu,
+    \]
+    где $f^+ = \max(f, 0)$, $f^- = -\min(f, 0)$.
+\end{definition}
+
+\begin{property}[Свойства интеграла]
+    \hfill
+    \begin{enumerate}[label=(\arabic*)]
+        \item \textbf{Линейность}: $\int (af + bg)  d\mu = a\int f  d\mu + b\int g  d\mu$ для $a,b \in \R$.
+        \item \textbf{Монотонность}: Если $f \leq g$ п.в., то $\int f  d\mu \leq \int g  d\mu$.
+        \item \textbf{Аддитивность}: Если $A \cap B = \emptyset$, то $\int_{A \cup B} f  d\mu = \int_A f  d\mu + \int_B f  d\mu$.
+        \item $|\int f  d\mu| \leq \int |f|  d\mu$.
+        \item Если $f = g$ п.в., то $\int f  d\mu = \int g  d\mu$.
+    \end{enumerate}
+\end{property}
+
+\begin{theorem}[Критерий интегрируемости (лемма о сходимости ряда)]
+    Функция $f \in \mathcal{L}^1(X, \mu)$ тогда и только тогда, когда существует последовательность \textbf{простых} функций $\{s_n\}$ такая, что:
+    \begin{enumerate}[label=(\roman*)]
+        \item $s_n \to f$ \textbf{п.в.}
+        \item $|s_n| \leq |f|$ п.в.
+        \item Ряд $\sum_{n=1}^{\infty} \int_X |s_n - s_{n-1}|  d\mu$ сходится (полагаем $s_0 = 0$).
+    \end{enumerate}
+    При этом $\int f  d\mu = \lim \int s_n  d\mu$.
+\end{theorem}
+
+% Билет 13 (интеграл Лебега)
+\section*{Билет 13: Интеграл Лебега}
+\begin{definition}[Интеграл Лебега]
+    \textbf{Интегралом Лебега} от измеримой функции $f: X \to \R \cup \{\pm\infty\}$ называется:
+    \[
+    \int_X f  d\mu = \sup_{\substack{s \text{ — простая} \\ 0 \leq s \leq f}} \int s  d\mu - \sup_{\substack{s \text{ — простая} \\ 0 \leq s \leq f^-}} \int s  d\mu
+    \]
+    при условии, что хотя бы один из супремумов конечен.
+\end{definition}
+
+\begin{property}[Свойства интеграла Лебега]
+    \hfill
+    \begin{enumerate}[label=(\arabic*)]
+        \item \textbf{Линейность}: $\int (af + bg)  d\mu = a\int f  d\mu + b\int g  d\mu$.
+        \item \textbf{Монотонность}: Если $f \leq g$ п.в., то $\int f  d\mu \leq \int g  d\mu$.
+        \item \textbf{Теорема Леви (монотонная сходимость)}: Если $0 \leq f_n \uparrow f$ п.в., то $\int f_n  d\mu \uparrow \int f  d\mu$.
+        \item \textbf{Теорема Лебега (мажорированная сходимость)}: Если $f_n \to f$ п.в., $|f_n| \leq g$ п.в., $g \in \mathcal{L}^1$, то $\int f_n  d\mu \to \int f  d\mu$.
+        \item \textbf{Лемма Фату}: Если $f_n \geq 0$ п.в., то $\int \varliminf f_n  d\mu \leq \varliminf \int f_n  d\mu$.
+    \end{enumerate}
+\end{property}
+
+\begin{theorem}[Связь интегралов Лебега и Римана]
+    \hfill
+    \begin{enumerate}[label=(\roman*)]
+        \item Если функция $f$ \textbf{интегрируема по Риману} на отрезке $[a,b]$, то она \textbf{интегрируема по Лебегу} на $[a,b]$ (относительно меры Лебега), и значения интегралов совпадают:
+        \[
+        \int_{a}^{b} f(x)  dx = \int_{[a,b]} f  dm.
+        \]
+        \item Обратное неверно: существуют функции, интегрируемые по Лебегу, но не интегрируемые по Риману. Пример: \textbf{функция Дирихле} $\1_{\Q \cap [0,1]}$. Она не интегрируема по Риману (разрывна всюду), но интегрируема по Лебегу: $\int_{[0,1]} \1_{\Q}  dm = m(\Q \cap [0,1]) = 0$, так как $\Q$ счетно.
+        \item Критерий интегрируемости по Риману: $f$ интегрируема по Риману на $[a,b]$ $\Leftrightarrow$ $f$ \textbf{ограничена} и множество ее \textbf{точек разрыва} имеет \textbf{меру Лебега нуль}.
+    \end{enumerate}
+\end{theorem}
+
+% Билет 14 (Канторово множество)
+\section*{Билет 14: Канторово множество}
+\begin{definition}[Канторово множество (стандартное)]
+    Построение на $[0,1]$:
+    \begin{enumerate}
+        \item Шаг 0: $C_0 = [0,1]$.
+        \item Шаг 1: Удаляем \textbf{среднюю треть} $(1/3, 2/3)$. Остается $C_1 = [0,1/3] \cup [2/3,1]$.
+        \item Шаг 2: Удаляем средние трети оставшихся интервалов: $(1/9, 2/9)$ и $(7/9, 8/9)$. Остается $C_2 = [0,1/9] \cup [2/9,1/3] \cup [2/3,7/9] \cup [8/9,1]$.
+        \item Продолжаем процесс: На шаге $n$ имеем $2^n$ замкнутых интервалов длины $3^{-n}$, удаляем среднюю треть каждого. Получаем $C_n$.
+    \end{enumerate}
+    \textbf{Канторово множество} $C = \bigcap_{n=0}^{\infty} C_n$.
+\end{definition}
+
+\begin{property}[Свойства канторова множества]
+    \hfill
+    \begin{enumerate}[label=(\arabic*)]
+        \item $C$ \textbf{непусто}: Содержит все концы удаляемых интервалов (0,1,1/3,2/3,1/9,2/9,7/9,8/9,...).
+        \item $C$ \textbf{замкнуто}: Как пересечение замкнутых множеств $C_n$.
+        \item $C$ \textbf{совершенно}: Замкнуто и не имеет изолированных точек (любая точка — предельная).
+        \item $C$ \textbf{нигде не плотно}: Его замыкание $\overline{C} = C$ не содержит интервалов (внутренность пуста).
+        \item \textbf{Мера Лебега}: $m(C_n) = (2/3)^n$, так как на каждом шаге удаляется треть длины. Тогда $m(C) = \lim_{n \to \infty} m(C_n) = \lim_{n \to \infty} (2/3)^n = 0$.
+        \item \textbf{Мощность}: $|C| = \mathfrak{c}$ (континуум). Доказательство: Каждой точке $x \in C$ соответствует последовательность выборов (левая или правая треть на каждом шаге), т.е. элемент $\{0,1\}^{\N}$, мощность которого $\mathfrak{c}$. Биекция: $x = \sum_{k=1}^{\infty} \frac{a_k}{3^k}$, где $a_k \in \{0,2\}$.
+        \item \textbf{Несчетность} (следует из мощности $\mathfrak{c}$).
+        \item \textbf{Все точки} $C$ являются \textbf{точками конденсации} (каждая окрестность содержит несчетно много точек $C$).
+    \end{enumerate}
+\end{property}
+
+% Билет 15 (L1)
+\section*{Билет 15: Пространство $L^1$}
+\begin{definition}[Банахово пространство $L^1(X, \mu)$]
+    Пусть $(X, \mathcal{M}, \mu)$ — пространство с мерой. Рассмотрим множество всех \textbf{интегрируемых} функций $f: X \to \R$ (т.е. $\int |f|  d\mu < \infty$). \\
+    Факторизуем его по отношению эквивалентности: $f \sim g$ если $f = g$ п.в. \\
+    \textbf{Пространство $L^1(X, \mu)$} — это множество \textbf{классов эквивалентности} интегрируемых функций. \\
+    Норма в $L^1$: $\|f\|_1 = \int_X |f|  d\mu$. \\
+    \textbf{Основные свойства}:
+    \begin{enumerate}[label=(\arabic*)]
+        \item $L^1$ — \textbf{полное нормированное пространство} (Банахово).
+        \item \textbf{Линейность}: $\|\alpha f\|_1 = |\alpha| \|f\|_1$, $\|f + g\|_1 \leq \|f\|_1 + \|g\|_1$.
+        \item $\|f\|_1 = 0 \Leftrightarrow f = 0$ п.в.
+        \item \textbf{Теорема Рисса-Фишера}: $L^1$ \textbf{полно} (любая фундаментальная последовательность сходится к элементу $L^1$).
+        \item \textbf{Плотные множества}: Непрерывные финитные функции; Простые интегрируемые функции; Ступенчатые функции (если $X \subset \R^n$).
+    \end{enumerate}
+\end{definition}
+
+% Билет 16 (L2)
+\section*{Билет 16: Пространство $L^2$}
+\begin{definition}[Гильбертово пространство $L^2(X, \mu)$]
+    Рассмотрим множество всех функций $f: X \to \R$ (или $\C$), для которых $\int |f|^2  d\mu < \infty$. \\
+    Факторизуем по отношению $f = g$ п.в. \\
+    \textbf{Пространство $L^2(X, \mu)$} — множество классов эквивалентности таких функций. \\
+    Скалярное произведение: $\langle f, g \rangle = \int_X f \overline{g}  d\mu$ (для $\R$: $\int f g  d\mu$). \\
+    Норма: $\|f\|_2 = \sqrt{\langle f, f \rangle} = \left( \int |f|^2  d\mu \right)^{1/2}$. \\
+    \textbf{Основные свойства}:
+    \begin{enumerate}[label=(\arabic*)]
+        \item $L^2$ — \textbf{полное пространство со скалярным произведением} (Гильбертово).
+        \item \textbf{Неравенство Коши-Буняковского}: $|\langle f, g \rangle| \leq \|f\|_2 \|g\|_2$.
+        \item \textbf{Теорема Рисса-Фишера}: $L^2$ \textbf{полно}.
+        \item \textbf{Плотные множества}: Те же, что и в $L^1$ (непрерывные финитные, простые, ступенчатые).
+        \item \textbf{Сходимость в среднем квадратичном}: $f_n \to f$ в $L^2$ означает $\|f_n - f\|_2 \to 0$.
+    \end{enumerate}
+\end{definition}
+
+\begin{definition}[Всюду плотное множество]
+    Подмножество $D$ топологического пространства $Y$ называется \textbf{всюду плотным}, если его замыкание $\overline{D} = Y$, т.е. любая точка $y \in Y$ является пределом некоторой последовательности точек из $D$.
+\end{definition}
+
+% Билет 17 (ортогональные системы)
+\section*{Билет 17: Ортогональные системы в $L^2$}
+\begin{definition}[Ортогональная система]
+    Система функций $\{\phi_n\}_{n=1}^{\infty} \subset L^2(X, \mu)$ называется \textbf{ортогональной}, если $\langle \phi_n, \phi_m \rangle = 0$ для всех $n \neq m$.
+\end{definition}
+
+\begin{definition}[Ортонормированная система (ОНС)]
+    Ортогональная система называется \textbf{ортонормированной}, если $\|\phi_n\|_2 = 1$ для всех $n$, т.е. $\langle \phi_n, \phi_m \rangle = \delta_{nm}$.
+\end{definition}
+
+\begin{definition}[Ряд Фурье]
+    Пусть $\{\phi_n\}$ — ОНС в $L^2(X, \mu)$, $f \in L^2(X, \mu)$. \textbf{Рядом Фурье} функции $f$ по системе $\{\phi_n\}$ называется ряд:
+    \[
+    f \sim \sum_{n=1}^{\infty} c_n \phi_n, \quad \text{где } c_n = \langle f, \phi_n \rangle = \int_X f \overline{\phi_n}  d\mu.
+    \]
+    Коэффициенты $c_n$ называются \textbf{коэффициентами Фурье}.
+\end{definition}
+
+\begin{example}[Тригонометрическая система]
+    На $X = [-\pi, \pi]$ с мерой Лебега, нормированной: $d\mu = \frac{dx}{2\pi}$. \\
+    Система функций:
+    \[
+    \phi_0(x) = 1, \quad \phi_n(x) = \cos(nx), \quad \psi_n(x) = \sin(nx) \quad (n = 1,2,3,\dots)
+    \]
+    \textbf{Не} ортонормирована. \\
+    Стандартная \textbf{ортонормированная тригонометрическая система}:
+    \[
+    \frac{1}{\sqrt{2\pi}}, \quad \frac{\cos(nx)}{\sqrt{\pi}}, \quad \frac{\sin(nx)}{\sqrt{\pi}} \quad (n=1,2,3,\dots)
+    \]
+    Или в комплексном виде на $[-\pi, \pi]$ с $d\mu = \frac{dx}{2\pi}$:
+    \[
+    \phi_n(x) = e^{inx} = \cos(nx) + i\sin(nx) \quad (n \in \Z).
+    \]
+    Тогда $\langle \phi_n, \phi_m \rangle = \frac{1}{2\pi} \int_{-\pi}^{\pi} e^{i(n-m)x}  dx = \delta_{nm}$.
+\end{example}
+
+% Билет 18 (ряды Фурье)
+\section*{Билет 18: Ряды Фурье}
+\begin{theorem}[Равенство Парсеваля]
+    Пусть $\{\phi_n\}$ — \textbf{ортонормированная система} в $L^2(X, \mu)$. Следующие условия эквивалентны:
+    \begin{enumerate}[label=(\roman*)]
+        \item Система $\{\phi_n\}$ \textbf{полна} (замыкание ее линейной оболочки совпадает с $L^2$).
+        \item Для любой $f \in L^2$: $\|f\|_2^2 = \sum_{n=1}^{\infty} |c_n|^2$ (равенство Парсеваля), где $c_n = \langle f, \phi_n \rangle$.
+        \item Ряд Фурье $f$ сходится к $f$ в $L^2$: $\left\| f - \sum_{k=1}^n c_k \phi_k \right\|_2 \to 0$.
+    \end{enumerate}
+\end{theorem}
+
+\begin{definition}[Разложение по базису Фурье]
+    Если ОНС $\{\phi_n\}$ \textbf{полна}, то она образует \textbf{ортонормированный базис} в $L^2$. Любая функция $f \in L^2$ разлагается в ряд Фурье, сходящийся к ней в $L^2$:
+    \[
+    f = \sum_{n=1}^{\infty} c_n \phi_n, \quad c_n = \langle f, \phi_n \rangle,
+    \]
+    где равенство понимается в смысле сходимости в $L^2$.
+\end{definition}
+
+% Билет 19 (вейвлеты)
+\section*{Билет 19: Вейвлеты}
+\begin{definition}[Вейвлет (всплеск)]
+    \textbf{Вейвлетом} (всплеском) называется функция $\psi \in L^2(\R)$, удовлетворяющая следующим условиям (часто):
+    \begin{enumerate}[label=(\roman*)]
+        \item \textbf{Нулевое среднее}: $\int_{-\infty}^{\infty} \psi(x)  dx = 0$.
+        \item \textbf{Нормированность}: $\|\psi\|_2 = 1$.
+        \item \textbf{Допускает порождающую ортонормированную систему}: Система функций
+        \[
+        \psi_{j,k}(x) = 2^{j/2} \psi(2^j x - k), \quad j,k \in \Z
+        \]
+        образует \textbf{ортонормированный базис} в $L^2(\R)$.
+    \end{enumerate}
+\end{definition}
+
+\begin{property}[Основные свойства вейвлетов]
+    \hfill
+    \begin{itemize}
+        \item \textbf{Локализация}: Вейвлеты хорошо локализованы и в \textbf{времени} (пространстве), и в \textbf{частоте} (в отличие от синусоид Фурье, локализованных только в частоте).
+        \item \textbf{Мультимасштабный анализ}: Позволяют анализировать сигналы на разных масштабах (частотах) и в разных положениях.
+        \item \textbf{Ортогональность}: $\langle \psi_{j,k}, \psi_{m,n} \rangle = \delta_{jm} \delta_{kn}$.
+        \item \textbf{Эффективность}: Быстрые алгоритмы разложения (быстрое вейвлет-преобразование).
+    \end{itemize}
+\end{property}
+
+\begin{example}[Виды вейвлетов]
+    \hfill
+    \begin{itemize}
+        \item \textbf{Вейвлет Хаара}: Простейший вейвлет с компактным носителем.
+        \[
+        \psi(x) = \begin{cases} 
+        1, & 0 \leq x < 1/2 \\
+        -1, & 1/2 \leq x < 1 \\
+        0, & \text{иначе}
+        \end{cases}
+        \]
+        \item \textbf{Вейвлет Добеши (Daubechies)}: Семейство гладких вейвлетов с компактным носителем.
+        \item \textbf{Вейвлет Мейера (Meyer)}: Гладкий вейвлет с бесконечным носителем, хорошей локализацией в частоте.
+        \item \textbf{Мексиканская шляпа (Ricker wavelet)}: $\psi(x) = \frac{2}{\sqrt{3}\pi^{1/4}} (1 - x^2) e^{-x^2/2}$.
+    \end{itemize}
+\end{example}
+
+\begin{remark}[Сравнение с преобразованием Фурье]
+    \hfill
+    \begin{itemize}
+        \item \textbf{Фурье}: Идеально для \textbf{периодических/стационарных} сигналов. Плохо локализован во времени (не показывает \textbf{когда} произошло событие).
+        \item \textbf{Вейвлеты}: Идеально для \textbf{нестационарных} сигналов, \textbf{локальных особенностей} (разрывы, всплески). Показывают \textbf{и частоту, и время} события. Эффективны для сжатия данных.
+    \end{itemize}
+\end{remark}
+
+\begin{example}[Применение вейвлетов]
+    \hfill
+    \begin{itemize}
+        \item Сжатие изображений (JPEG 2000).
+        \item Очистка сигналов от шумов (вейвлет-пороги).
+        \item Анализ временных рядов (финансы, геофизика).
+        \item Распознавание образов.
+        \item Решение дифференциальных уравнений.
+    \end{itemize}
+\end{example}
 
 \end{document}
